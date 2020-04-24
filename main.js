@@ -40,12 +40,3 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-const { ipcMain } = require('electron')
-ipcMain.on('uploadFile', (event, arg) => {
-  const { payload } = arg
-  // 后台Node进程通知前端上传成功
-  event.sender.send('uploadFileSuccess', {
-    msg: 'ok',
-    code: 0
-  })
-})

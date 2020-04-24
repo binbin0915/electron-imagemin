@@ -4,13 +4,26 @@
 // `nodeIntegration` is turned off. Use `preload.js` to
 // selectively enable features needed in the rendering
 // process.
-const {ipcRenderer} = require('electron')
+
+const fs = require('fs')
+const Compressor = require('compressorjs')
+
 const eleUpImg = document.querySelector('#upload-image')
 eleUpImg.addEventListener('change', event => {
-    ipcRenderer.send('uploadFile', {payload: event.target.files[0]})
-    console.log(event)
-})
-ipcRenderer.on('uploadFileSuccess', (event, arg) => {
-    const {msg, code} = arg
-    console.log('上传成功', msg, code)
+    const file = event.target.files[0]
+    new Compressor(file, {
+        success(blob) {
+            blob.arrayBuffer().then(arrBuf => {
+                const buf = new Uint8Array(arrBuf)
+                fs.writeFile('xaxx.png', buf, err => {
+                    if (err) {
+                        alert('压缩失败！')
+                    }
+                })
+            })
+        },
+        error(err) {
+            alert(err.message)
+        },
+    })
 })
