@@ -9,15 +9,46 @@ const fs = require('fs')
 const Compressor = require('compressorjs')
 
 const eleUpImg = document.querySelector('#upload-image')
+const eleDoCompress = document.querySelector('#doCompress')
+const eleFileName = document.querySelector('#file-name')
+const eleQuality = document.querySelector('#quality')
+
+let files
 eleUpImg.addEventListener('change', event => {
-    const file = event.target.files[0]
+    files = event.target.files
+    eleFileName.innerHTML = ''
+    for (let index = 0; index < files.length; index++) {
+        const file = files[index]
+        if (index < 10) {
+            eleFileName.innerHTML += `<li>${file.name}</li>`
+            if (index === 9) {
+                eleFileName.innerHTML += `<li>...</li>`
+            }
+        }
+    }
+})
+eleDoCompress.addEventListener('click', () => {
+    if (!files) {
+        alert('请先上传文件')
+        return
+    }
+    for (let file of files) {
+        compress(file, eleQuality.value, file.path.replace(file.name, 'compressed-' + file.name))
+    }
+    eleFileName.innerHTML = '未上传图片'
+    files = null
+    alert('完成！')
+})
+
+function compress(file, quality, path) {
     new Compressor(file, {
+        quality,
         success(blob) {
             blob.arrayBuffer().then(arrBuf => {
                 const buf = new Uint8Array(arrBuf)
-                fs.writeFile('xaxx.png', buf, err => {
+                fs.writeFile(path, buf, err => {
                     if (err) {
-                        alert('压缩失败！')
+                        alert(path + '压缩失败！')
                     }
                 })
             })
@@ -26,4 +57,4 @@ eleUpImg.addEventListener('change', event => {
             alert(err.message)
         },
     })
-})
+}
