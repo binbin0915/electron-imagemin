@@ -58,3 +58,14 @@ function compress(file, quality, path) {
         },
     })
 }
+
+//联系作者
+const eleContact = document.querySelector('#contact')
+const eleContactCtt = document.querySelector('#contact-content')
+eleContact.addEventListener('click', () => {
+    if (eleContactCtt.classList.contains('is-hidden')) {
+        eleContactCtt.classList.remove('is-hidden')
+    } else {
+        eleContactCtt.classList.add('is-hidden')
+    }
+})
